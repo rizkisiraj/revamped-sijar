@@ -46,7 +46,7 @@ export default async function HomePage() {
       </section>
 
       {/* Canvas Animation */}
-      <section className="animate-fade-up-2">
+      <section className="animate-fade-up-2 hidden sm:block">
         <MountainCanvas />
       </section>
 
