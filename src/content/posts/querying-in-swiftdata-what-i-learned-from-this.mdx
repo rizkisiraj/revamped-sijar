@@ -1,0 +1,145 @@
+---
+title: 'Querying in SwiftData: What I Learned From This'
+date: '2025-07-14'
+tag: 'iOS'
+description: 'A lesson learned from experimenting with SwiftData'
+---
+
+When I started using SwiftData, Apple’s (not-so-new) data persistence framework, I expected it to just work.
+
+And yeah — it did.
+Way simpler than Core Data. I defined a model, slapped `@Query` on it, and boom, the data popped up in my SwiftUI view like magic.
+
+But then I got confident.
+Too confident.
+
+I started adding filters based on user preferences, trying to make it all dynamic and fancy. I thought I was cooking.
+
+Then out of nowhere — **BOOM**.
+![Explosion](https://upload.wikimedia.org/wikipedia/commons/7/79/Operation_Upshot-Knothole_-_Badger_001.jpg)
+
+Compiler error. Red lines. Silent judgment from Xcode.
+
+My perfect little setup stopped working, and I had no idea why.
+
+So here’s what I did wrong.
+
+```swift
+@Query var articles: [Article]
+@State private var preferredGenre: Genre = .game
+
+init() {
+    _articles = Query(
+        filter: #Predicate<Articles> { genre in
+            article.genre == preferredGenre
+        },
+        sort: \article.createdAt,
+        order: .reverse
+    )
+}
+```
+
+The idea was simple: I wanted to filter articles based on a preferred genre, a value stored in a state variable.
+
+But this approach failed to compile.
+
+It breaks because `#Predicate` can’t work with runtime values like `@State` properties. It needs everything inside the predicate to be resolvable at **compile time**.
+
+In this case, `preferredGenre` is a `@State` variable, which means it only exists at runtime. Even if it’s set to a fixed enum like `.game`, the compiler still can’t evaluate it inside the `#Predicate` macro.
+
+That’s when I realized that if I wanted to do anything dynamic like this, I had to find a workaround.
+
+After doing some research, I’ve found **two ways** to handle dynamic queries in SwiftData.
+
+## 1. Post-Filtering with Computed Property
+
+One workaround I found is to fetch everything using `@Query`, then filter it in memory with a computed property.
+
+```swift
+@Query var allStates: [Article]
+@State private var preferredGenre: Genre = .game
+
+var filteredStates: [Article] {
+    allStates.filter { $0.genre == preferredGenre }
+}
+```
+
+This completely avoids compile-time predicate issues.
+
+But keep in mind that **all data is loaded into memory**, so if your dataset is large, this approach might not be ideal.
+
+## 2. Use Wrapper View
+
+Another workaround I explored is moving the dynamic part of the query to a **parent (wrapper) view**, then deciding which filtered query to use inside the child view.
+
+This works because SwiftData’s `#Predicate` is evaluated at compile time, meaning any value used inside it must already be known when the view is initialized.
+
+You cannot dynamically modify it based on runtime state.
+
+For example, I wanted to show either **tech articles** or **game articles** based on a flag passed in.
+
+Since I couldn't build that predicate dynamically, I handled it with a `switch` statement inside the initializer.
+
+```swift
+@Query private var articles: [Article]
+
+init(prefferedGenre: Genre) {
+    switch prefferedGenre {
+    case .game:
+        _articles = Query(filter: #Predicate<Article> {
+            $0.genre == .game
+        })
+
+    case .tech:
+        _articles = Query(filter: #Predicate<Article> {
+            $0.genre == .tech
+        })
+
+    case .lifestyle:
+        _articles = Query(filter: #Predicate<Article> {
+            $0.genre == .lifestyle
+        })
+    }
+}
+```
+
+Then in the parent (wrapper) view, I pass the selected genre into the child view.
+
+```swift
+@State private var prefferedGenre: Genre
+
+ArticleListView(prefferedGenre: prefferedGenre)
+```
+
+This way:
+
+* The dynamic decision happens **outside the predicate**
+* The `@Query` filter remains **static**
+* SwiftData stays happy.
+
+It’s not always the most elegant solution, but it works well when you only need to support a **few known options**.
+
+## Final Thoughts
+
+SwiftData is cool.
+
+But it’s also tricky.
+
+Once you understand how it works under the hood — especially the **compile-time behavior of `#Predicate`** — it becomes much easier to design around its quirks.
+
+I’m still exploring SwiftData, especially things like:
+
+* `FetchDescriptor` for more flexible queries
+* async fetching
+* integrating with more complex app logic
+
+I’ll keep updating this post as I discover more patterns, workarounds, or pitfalls worth sharing.
+
+Hopefully, this helps someone avoid the same **“why won’t this work?”** moment I had.
+
+---
+
+## References
+
+* Apple Developer Documentation – Fetching, sorting, and filtering data
+* Apple Developer Documentation – Predicate
