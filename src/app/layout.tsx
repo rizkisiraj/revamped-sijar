@@ -40,7 +40,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Nav />
         <main
           id="main-content"
-          className="max-w-[720px] mx-auto px-6 pt-[calc(60px+48px)] pb-20"
+          className="max-w-[720px] mx-auto px-4 sm:px-6 pt-[calc(60px+48px)] pb-20"
         >
           {children}
         </main>

@@ -98,9 +98,7 @@ body {
 
 /* ── RESPONSIVE NAV SWITCH ── */
 @media (max-width: 720px) {
-  #topNav    { display: none !important; }
-  #bottomNav { display: flex !important; }
-  main { padding-top: 2rem; padding-bottom: calc(64px + 1rem); padding-left: 1rem; padding-right: 1rem; }
+  main { padding-bottom: 2rem; }
 }
 
 /* ── CUSTOM UTILITIES (can't be expressed in Tailwind alone) ── */
