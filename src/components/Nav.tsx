@@ -51,7 +51,7 @@ export default function Nav() {
             href="/"
             className="font-mono text-[0.85rem] text-fg no-underline tracking-[-0.01em]"
           >
-            siraj.dev
+            sijar
           </Link>
 
           <ul className="flex items-center gap-1 list-none">
