@@ -6,6 +6,7 @@ import { fetcher } from '~/lib/fetcher';
 import {
   type LastFmResponse,
   type WakaTimeResponse,
+  type LeetCodeResponse,
   type TopTrack,
   type LanguageStat,
 } from '~/lib/types';
@@ -64,6 +65,14 @@ export default function DashboardPage() {
     refetchInterval: 60_000,
   });
 
+  const { data: leetcodeData, isLoading: leetcodeLoading } = useQuery<LeetCodeResponse>({
+    queryKey: ['leetcode'],
+    queryFn: () => fetcher<LeetCodeResponse>('/api/leetcode'),
+    staleTime: 3_600_000,
+    refetchOnWindowFocus: false,
+    refetchInterval: false,
+  });
+
   const { data: wakaData, isLoading: wakaLoading } = useQuery<WakaTimeResponse>({
     queryKey: ['wakatime'],
     queryFn: () => fetcher<WakaTimeResponse>('/api/wakatime'),
@@ -74,6 +83,7 @@ export default function DashboardPage() {
 
   const nowPlaying = spotifyData?.nowPlaying;
   const topTracks  = (spotifyData?.topTracks ?? []) as TopTrack[];
+  const leetcodeSolved = leetcodeData?.solved;
   const codingHours = wakaData?.totalHours;
   const topLanguage = wakaData?.topLanguage;
   const languages   = (wakaData?.languages ?? []) as LanguageStat[];
@@ -96,10 +106,11 @@ export default function DashboardPage() {
 
       {/* Stat cards */}
       <section className="animate-fade-up-2">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           {[
-            { label: 'Coding this week', value: codingHours, sub: 'via WakaTime', loading: wakaLoading },
-            { label: 'Top language',     value: topLanguage, sub: 'last 7 days',  loading: wakaLoading },
+            { label: 'Coding this week', value: codingHours,    sub: 'via WakaTime', loading: wakaLoading },
+            { label: 'Top language',     value: topLanguage,    sub: 'last 7 days',  loading: wakaLoading },
+            { label: 'LeetCode solved',  value: leetcodeSolved, sub: 'all time',     loading: leetcodeLoading },
           ].map(stat => {
             const labelId = `stat-label-${stat.label.replace(/\s+/g, '-').toLowerCase()}`;
             return (

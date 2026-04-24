@@ -13,6 +13,7 @@ export const env = createEnv({
     LASTFM_API_KEY: z.string().default("placeholder"),
     LASTFM_USERNAME: z.string().default("placeholder"),
     WAKATIME_API_KEY: z.string().default("placeholder"),
+    LEETCODE_USERNAME: z.string().default("placeholder"),
   },
   client: {
     NEXT_PUBLIC_APP_URL: z.string().url().default("http://localhost:3000"),
@@ -28,6 +29,7 @@ export const env = createEnv({
     LASTFM_API_KEY: process.env.LASTFM_API_KEY,
     LASTFM_USERNAME: process.env.LASTFM_USERNAME,
     WAKATIME_API_KEY: process.env.WAKATIME_API_KEY,
+    LEETCODE_USERNAME: process.env.LEETCODE_USERNAME,
     NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
   },
   skipValidation: true,

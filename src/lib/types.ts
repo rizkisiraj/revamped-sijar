@@ -31,6 +31,14 @@ export type WakaTimeResponse = {
   languages: LanguageStat[];
 };
 
+// LeetCode types
+export type LeetCodeResponse = {
+  solved: number | null;
+  easySolved: number | null;
+  mediumSolved: number | null;
+  hardSolved: number | null;
+};
+
 // Content types
 export type PostMeta = {
   slug: string;
