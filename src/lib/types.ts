@@ -57,6 +57,11 @@ export type ProjectMeta = {
   type: string;
   year: number;
   description: string;
+  screenshots?: string[];
+  screenshotCaptions?: string[];
+  demo?: string;
+  demoCaption?: string;
+  demoType?: 'video' | 'gif';
 };
 
 export type Project = ProjectMeta & { content: string };

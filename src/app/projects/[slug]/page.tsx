@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import ReactMarkdown from 'react-markdown';
 import { getProject } from '~/helpers/getProject';
 import { getProjects } from '~/helpers/getProjects';
+import { ProjectGallery } from '~/components/ProjectGallery';
 
 export async function generateStaticParams() {
   return getProjects().map(p => ({ slug: p.slug }));
@@ -87,6 +88,9 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
           {project.content}
         </ReactMarkdown>
       </div>
+
+      {/* Demo + Screenshots */}
+      <ProjectGallery project={project} />
 
       {/* Footer */}
       <div className="flex gap-3 mt-12 pt-8 border-t border-border">
