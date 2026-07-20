@@ -57,6 +57,7 @@ export type ProjectMeta = {
   type: string;
   year: number;
   description: string;
+  cover?: string;
   screenshots?: string[];
   screenshotCaptions?: string[];
   demo?: string;

@@ -19,6 +19,7 @@ export const getProject = cache((slug: string): Project | null => {
     type: data.type as string,
     year: data.year as number,
     description: data.description as string,
+    cover: (data.cover as string | undefined) ?? undefined,
     screenshots: (data.screenshots as string[]) ?? [],
     screenshotCaptions: (data.screenshotCaptions as string[] | undefined) ?? [],
     demo: (data.demo as string | undefined) ?? undefined,

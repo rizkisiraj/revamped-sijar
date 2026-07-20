@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { type ProjectMeta } from '~/lib/types';
 
 type FilterType = 'all' | 'android' | 'ios' | 'web';
@@ -17,23 +18,36 @@ function ProjectCard({ project }: { project: ProjectMeta }) {
   return (
     <div className="project-card h-full flex flex-col border border-border rounded-[8px] overflow-hidden bg-card transition-all duration-[150ms,200ms] hover:-translate-y-[2px] hover:border-border-2">
       {/* Thumbnail */}
-      <div className="aspect-video bg-bg-2 border-b border-border relative flex items-center justify-center overflow-hidden">
-        <div
-          aria-hidden="true"
-          className="absolute inset-0"
-          style={{
-            background: `repeating-linear-gradient(
-              -45deg,
-              transparent,
-              transparent 8px,
-              color-mix(in srgb, var(--color-border) 60%, transparent) 8px,
-              color-mix(in srgb, var(--color-border) 60%, transparent) 9px
-            )`,
-          }}
-        />
-        <span aria-hidden="true" className="relative font-mono text-[0.7rem] text-center leading-[1.5] px-2" style={{ color: 'var(--color-border-2)' }}>
-          {project.title}<br />screenshot
-        </span>
+      <div className="aspect-video bg-bg-2 border-b border-border relative overflow-hidden">
+        {project.cover ? (
+          <Image
+            src={project.cover}
+            alt={`${project.title} cover`}
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 960px) 50vw, 320px"
+            className="object-cover"
+            loading="lazy"
+          />
+        ) : (
+          <>
+            <div
+              aria-hidden="true"
+              className="absolute inset-0"
+              style={{
+                background: `repeating-linear-gradient(
+                  -45deg,
+                  transparent,
+                  transparent 8px,
+                  color-mix(in srgb, var(--color-border) 60%, transparent) 8px,
+                  color-mix(in srgb, var(--color-border) 60%, transparent) 9px
+                )`,
+              }}
+            />
+            <span aria-hidden="true" className="absolute inset-0 flex items-center justify-center font-mono text-[0.7rem] text-center leading-[1.5] px-2" style={{ color: 'var(--color-border-2)' }}>
+              {project.title}<br />screenshot
+            </span>
+          </>
+        )}
       </div>
 
       {/* Body */}

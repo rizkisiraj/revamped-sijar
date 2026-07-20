@@ -119,37 +119,23 @@ function ScreenshotGrid({
             >
               <div
                 className={[
-                  'rounded-xl overflow-hidden border border-border bg-bg-2',
+                  'relative rounded-xl overflow-hidden border border-border bg-bg-2',
                   'shadow-sm',
-                  isMobileApp ? 'h-[500px] w-auto' : 'w-full',
+                  // Portrait: fixed height + phone aspect ratio gives the container a
+                  // known width so next/image `fill` can optimize + cache the image.
+                  // Landscape: full width + 16:10 aspect.
+                  isMobileApp ? 'h-125 aspect-9/19.5' : 'w-full aspect-16/10',
                 ].join(' ')}
               >
-                {isMobileApp ? (
-                  // Portrait phone screenshots: fixed height, intrinsic width
-                  // Can't use next/image fill here without a sized container that
-                  // knows the aspect ratio, so we fall back to a plain img with lazy.
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={src}
-                    alt={altText}
-                    loading="lazy"
-                    decoding="async"
-                    className="h-full w-auto block object-cover"
-                  />
-                ) : (
-                  // Landscape web screenshots: next/image with responsive sizing
-                  <div className="relative aspect-[16/10] w-full">
-                    <Image
-                      src={src}
-                      alt={altText}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 50vw"
-                      className="object-cover"
-                      loading="lazy"
-                      placeholder="empty"
-                    />
-                  </div>
-                )}
+                <Image
+                  src={src}
+                  alt={altText}
+                  fill
+                  sizes={isMobileApp ? '240px' : '(max-width: 640px) 100vw, 50vw'}
+                  className="object-cover"
+                  loading="lazy"
+                  placeholder="empty"
+                />
               </div>
               {caption && (
                 <figcaption className="mt-1.5 text-center font-mono text-[0.7rem] text-muted tracking-wide">

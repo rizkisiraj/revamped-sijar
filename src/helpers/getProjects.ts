@@ -21,6 +21,7 @@ export const getProjects = cache((): ProjectMeta[] => {
       type: data.type as string,
       year: data.year as number,
       description: data.description as string,
+      cover: (data.cover as string | undefined) ?? undefined,
     } satisfies ProjectMeta;
   });
 
