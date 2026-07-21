@@ -19,3 +19,5 @@ dist/
 *.pem
 tsconfig.tsbuildinfo
 .claude
+# local full-res cover backups
+public/covers/_originals/
